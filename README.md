@@ -12,3 +12,5 @@ make
 boost==1.65  
 log4cxx  
 odb==2.5.0 (look into Dockerfile-builder)  
+openssl  
+libcrypto  
