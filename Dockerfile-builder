@@ -1,0 +1,50 @@
+FROM ubuntu
+
+RUN apt update && apt install -y gcc-7-plugin-dev gcc git libboost-atomic-dev libboost-thread-dev \
+                                libboost-system-dev libboost-date-time-dev libboost-regex-dev \
+                                libboost-filesystem-dev libboost-random-dev libboost-chrono-dev \
+                                libboost-serialization-dev libwebsocketpp-dev openssl libssl-dev \
+                                ninja-build libboost-all-dev libssl-dev liblog4cxx-dev liblog4cxx10v5 \
+                                libcpprest-dev curl
+
+RUN apt install -y cmake
+RUN apt install -y libmysqlclient-dev
+
+RUN mkdir build2-build
+RUN cd build2-build
+
+RUN curl -sSfO https://download.build2.org/0.12.0/build2-install-0.12.0.sh
+
+RUN sh build2-install-0.12.0.sh --yes --trust yes
+
+RUN cd ../
+
+RUN mkdir odb-build
+WORKDIR /odb-build
+
+RUN bpkg create --trust-yes -d odb-gcc-7 cc config.cxx=g++ config.cc.coptions=-O3 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+
+WORKDIR /odb-build/odb-gcc-7
+
+RUN ls -la
+
+RUN bpkg build --trust-yes --yes odb@https://pkg.cppget.org/1/beta
+RUN apt-get -y install sudo
+RUN bpkg install odb
+
+WORKDIR /odb-build
+
+RUN mkdir odb-build-libs
+WORKDIR /odb-build/odb-build-libs
+
+RUN bpkg create --trust-yes -d gcc-7 cc config.cxx=g++ config.cc.coptions=-O3 config.install.root=/usr/local config.install.sudo=sudo
+
+WORKDIR /odb-build/odb-build-libs/gcc-7
+
+RUN bpkg add --trust-yes --trust yes https://pkg.cppget.org/1/beta
+RUN bpkg fetch --trust-yes
+RUN bpkg build --trust-yes --yes libodb
+RUN bpkg build --trust-yes --yes libodb-sqlite
+RUN bpkg build --trust-yes --yes libodb-pgsql
+RUN bpkg build --trust-yes --yes libodb-mysql
+RUN bpkg install --all --recursive
