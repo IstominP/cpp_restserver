@@ -3,6 +3,10 @@
 
 #include <memory> // std::auto_ptr
 #include <iostream>
+#include <string>
+#include <set>
+#include <exception>
+#include <iostream>
 
 // include log4cxx header files.
 #include "log4cxx/logger.h"
@@ -13,15 +17,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
-#include <string>
-#include <set>
-#include <exception>
-#include <iostream>
+
+using namespace std;
 
 using namespace log4cxx;
 using namespace log4cxx::helpers;
-
-using namespace std;
 
 using namespace boost::property_tree;
 
@@ -30,8 +30,7 @@ std::unique_ptr<Settings> settings;
 
 LoggerPtr logger(Logger::getLogger("RestServerApp"));
 
-void startServer(const utility::string_t &address, int argc, char *argv[])
-{
+void startServer(const utility::string_t &address, int argc, char *argv[]) {
     uri_builder uri(address);
     uri.append_path(U("dbdemo/"));
     auto addr = uri.to_uri().to_string();
@@ -42,8 +41,7 @@ void startServer(const utility::string_t &address, int argc, char *argv[])
     LOG4CXX_INFO(logger, "Server started.")
 }
 
-void shutDownServer()
-{
+void shutDownServer() {
     g_http->Close().wait();
     return;
 }

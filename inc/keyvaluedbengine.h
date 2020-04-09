@@ -33,7 +33,7 @@ public:
     void del(http_request &request);
 
     std::unique_ptr<user> getUserByName(const string& username);
-    // user &getUserByName(const string& username);
+    unsigned long getUserIdByName(const string &username);
     long createNewUser(const string& username, const string& password);
     long updateUserPassword(long userId, const string& password);
     void deleteUserByName(const string& username);

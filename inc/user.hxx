@@ -21,8 +21,12 @@ public:
         return username_;
     }
 
-    const std::string& password() const{
+    const std::string& password() const {
         return password_;
+    }
+
+    const unsigned long id() const {
+        return id_;
     }
 
     void password(const std::string& password) {
